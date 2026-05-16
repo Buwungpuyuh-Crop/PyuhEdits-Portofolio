@@ -107,7 +107,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const videosToShow = allVideosData.slice(startIndex, endIndex);
 
         // Looping data video dan buat HTML-nya
-        feedContainer.innerHTML = videosToShow.map(video => `
+        // Looping data video dan buat HTML-nya
+        feedContainer.innerHTML = videosToShow.map(video => {
+            // LOGIKA FILTER VIEWS:
+            // Cek apakah views mengandung huruf 'k' (seperti 1.5k) ATAU angkanya >= 1000
+            // Jika tidak memenuhi, biarkan kosong.
+            const hasK = video.views && video.views.toString().toLowerCase().includes('k');
+            const isHighNum = video.views && parseInt(video.views) >= 1000;
+            
+            const viewsDisplay = (hasK || isHighNum) ? `<span>${video.views} views</span>` : "";
+
+            return `
             <div class="video-card fade-in">
                 <div class="video-thumbnail" data-video-id="${video.id}">
                     <img src="https://img.youtube.com/vi/${video.id}/maxresdefault.jpg" alt="${video.title}">
@@ -119,12 +129,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="video-info">
                     <div class="video-title">${video.title}</div>
                     <div class="video-meta">
-                        <span>${video.views} views</span>
+                        ${viewsDisplay}
                         <span>${video.date}</span>
                     </div>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
 
         setupThumbnailClickHandlers();
     }
